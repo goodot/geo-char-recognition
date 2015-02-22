@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from PIL import Image
 from numpy import array
 import sqlite3
@@ -8,6 +9,17 @@ from pybrain.tools.shortcuts import buildNetwork
 
 global dimage, image, db,alphabet
 
+alphabet = {0:'ა',1:'ბ',2:'გ',3:'დ',4:'ე',5:'ვ',6:'ზ',7:'თ',8:'ი',9:'კ',
+            10:'ლ',11:'მ',12:'ნ',13:'ო',14:'პ',15:'ჟ',16:'რ',17:'ს',18:'ტ',
+            19:'უ',20:'ფ',21:'ქ',22:'ღ',23:'ყ',24:'შ',25:'ჩ',26:'ც',27:'ძ',
+            28:'წ',29:'ჭ',30:'ხ',31:'ჯ',32:'ჰ'}
+def getcharkey(char):
+    for key,ch in alphabet.iteritems():
+        if ch == char:
+            return key
+
+
+        
 def main():
     db = sqlite3.connect('data.db')
 
@@ -20,8 +32,7 @@ def main():
 
         
 class Sample:
-    def __init__(self,ID,Input,Target):
-        self.ID = ID
+    def __init__(self,Input,Target):
         self.Input = Input
         self.Target = Target
     def __eq__(self,other):
@@ -52,7 +63,7 @@ class Params:
     def getWeights(self):
         w = self.Weights.split(',')
         return [float(i) for i in w]
-    
+
 
     
 def close():
@@ -73,12 +84,18 @@ def blackwhite(dim):
     dim = array(im)
     return dim
 
+def makestring(dim):
+    string = ''
+    for i in dim:
+        for j in i:
+            string = string + str(j) + ','
             
-	
-def addSample(img):
-	image = img
-	dimage = array(img)
-	dimage = blackwhite(dimage)
+        string = string[:-1]
+        
+    return string
+    
+def addSample(sample):
+    x = 3
 
 
 def getUpRow(dimage):
@@ -138,16 +155,16 @@ def getBox(dimage):
     
 
 
-	
-	
+    
+    
 
-	
-	
+    
+    
 
 
 
 
 
 if __name__ == "__main__":
-	main()
-	
+    main()
+    

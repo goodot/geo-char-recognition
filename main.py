@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from Tkinter import *
 from PIL import Image,ImageDraw,ImageTk
 import os
@@ -76,14 +77,14 @@ def main():
 	delAllButton = Button(text = 'გასუფთავება',bg = 'white', command =  deleteboard)
 	delAllButton.grid(row = 0, column = 1)
 
-	textarea = Entry(width = 17)
+	textarea = Entry(width = 17, bg  = 'white')
 	textarea.grid(row = 1, column = 0)
 	
 	
 	whichButton = Button(root, bg = 'white',text = '?', width = 15, command = lambda: whichCharIsIt(image,root))
 	whichButton.grid(row = 2,column = 0)
 
-	addButton = Button(root,bg = 'white', text = 'დამატება',  command = lambda: addSample(textarea,root,image) )
+	addButton = Button(root,bg = 'white', text = 'დამატება',  command = lambda: add(textarea) )
 	addButton.grid(column = 1, row = 1)
 
 	trainButton = Button(root,bg = 'white', text  = 'გაწვრთნა', width = 15, command = trainOnSamples)
@@ -108,24 +109,35 @@ def main():
 def trainOnSamples():
 	print 'trainOnSamples()'
 
-def addSample(entry,rt,im):
-	cr = im.crop(getBox(array(im)))
-	cr = cr.resize((32,32),Image.ANTIALIAS)
-	txt = entry.get()
+def add(entry):
+        char = entry.get()
+        char = str(char)
+        entry.insert(0,str(type(char)))
+        
+
+        if len(char) == 0 or len(char) > 1:
+                entry['bg'] = '#F49C9C'
+        else:
+                
+                if char in alphabet.values():
+                        entry['bg'] = 'white'
+                        dim = array(image)
+                        dim = blackwhite(dim)
+                        inp = makestring(dim)
+                        tar = getcharkey(char)
+                        sample = Sample(inp,tar)
+                        try:
+                                
+                                addSample(sample)
+                        except Exception as e:
+                                tkMessageBox.showerror(e.message)
+                else:
+                        entry['bg'] = '#F49C9C'
+                        
+                        
 	
-	if txt == '':
-		entry['highlightbackground'] = 'red'
-	else:
-		msg1 = 'ეს ასო'
-		msg2 = 'არის ხო?!'
-		space = ' '
-		seq = [msg1,txt.decode('utf-8'),msg2]
-		if len(txt)!= 1:
-		    entry['highlightbackground'] = 'red'
-		else:
-		    msg = u'-'.join(seq)
-		    msg.decode('utf-8')
-		    result = tkMessageBox.askyesno(title = '',message = msg)
+		    
+		
 
 		    
 def whichCharIsIt(img,r):
