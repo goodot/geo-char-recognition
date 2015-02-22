@@ -111,15 +111,17 @@ def trainOnSamples():
 
 def add(entry):
         char = entry.get()
-        char = str(char)
-        entry.insert(0,str(type(char)))
+        
+        
+        #entry.insert(0,str(type(char)))
         
 
         if len(char) == 0 or len(char) > 1:
                 entry['bg'] = '#F49C9C'
         else:
-                
-                if char in alphabet.values():
+                vals = [i.decode('utf-8') for i in alphabet.values()]
+                if char in vals:
+                        
                         entry['bg'] = 'white'
                         dim = array(image)
                         dim = blackwhite(dim)
