@@ -7,21 +7,14 @@ import tkMessageBox
 from pybrain.tools.shortcuts import buildNetwork
 
 
-global dimage, image, db,alphabet
+#global db, x, dimage, image,alphabet
 
 alphabet = {0:'ა',1:'ბ',2:'გ',3:'დ',4:'ე',5:'ვ',6:'ზ',7:'თ',8:'ი',9:'კ',
             10:'ლ',11:'მ',12:'ნ',13:'ო',14:'პ',15:'ჟ',16:'რ',17:'ს',18:'ტ',
             19:'უ',20:'ფ',21:'ქ',22:'ღ',23:'ყ',24:'შ',25:'ჩ',26:'ც',27:'ძ',
             28:'წ',29:'ჭ',30:'ხ',31:'ჯ',32:'ჰ'}
-def getcharkey(char):
-    for key,ch in alphabet.iteritems():
-        if ch == char:
-            return key
 
 
-        
-def main():
-    db = sqlite3.connect('data.db')
 
 
 
@@ -64,7 +57,15 @@ class Params:
         w = self.Weights.split(',')
         return [float(i) for i in w]
 
+def getcharkey(char):
+    for key,ch in alphabet.iteritems():
+        if ch.decode('utf-8') == char:
+            return key
 
+
+        
+def main():
+    x = 10
     
 def close():
     db.close()
@@ -95,7 +96,13 @@ def makestring(dim):
     return string
     
 def addSample(sample):
-    x = 3
+    
+    db = sqlite3.connect('data.db')
+    cursor = db.cursor()
+    cursor.execute("insert into samples values (?,?)",[sample.Input,sample.Target])
+    db.commit()
+    db.close()
+    
 
 
 def getUpRow(dimage):

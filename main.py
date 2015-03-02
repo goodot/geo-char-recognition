@@ -111,6 +111,7 @@ def trainOnSamples():
 
 def add(entry):
         char = entry.get()
+
         
         
         #entry.insert(0,str(type(char)))
@@ -132,7 +133,7 @@ def add(entry):
                                 
                                 addSample(sample)
                         except Exception as e:
-                                tkMessageBox.showerror(e.message)
+                                tkMessageBox.showerror('ERROR',e.message)
                 else:
                         entry['bg'] = '#F49C9C'
                         
