@@ -25,9 +25,11 @@ alphabet = {0:'ა',1:'ბ',2:'გ',3:'დ',4:'ე',5:'ვ',6:'ზ',7:'თ',8:'�
 
         
 class Sample:
-    def __init__(self,Input,Target):
+    def __init__(self,Input,Target,Id=None):
+        self.Id = Id
         self.Input = Input
         self.Target = Target
+
     def __eq__(self,other):
         return isinstance(other, self.__class__) and self.Input == other.Input and self.Target == other.Target
 
@@ -43,9 +45,10 @@ class Sample:
         return [int(i) for i in tar]
 
 class Params:
-    def __init__(self,ID,Weights):
+    def __init__(self,Weights,ID = None):
         self.ID = ID
         self.Weights = Weights
+    
     def __eq__(self,other):
         return isinstance(other,self.__class__) and self.Weights == other.Weights
 
@@ -64,8 +67,26 @@ def getcharkey(char):
 
 
         
-def main():
-    x = 10
+def init():
+    global samples
+    samples = []
+    db = sqlite3.connect('data.db')
+    cursor = db.cursor()
+    rows = cursor.execute('select *from samples')
+    rows = rows.fetchall()
+
+
+    for r in rows:
+        sample = Sample(r[1],r[2])
+        samples.append(sample)
+
+
+    db.close()
+
+
+    print 'main()'
+
+        
     
 def close():
     db.close()
@@ -99,7 +120,7 @@ def addSample(sample):
     
     db = sqlite3.connect('data.db')
     cursor = db.cursor()
-    cursor.execute("insert into samples values (?,?)",[sample.Input,sample.Target])
+    cursor.execute("insert into samples (Input,Target) values (?,?)",[sample.Input,sample.Target])
     db.commit()
     db.close()
     
@@ -166,12 +187,12 @@ def getBox(dimage):
     
 
     
-    
+init()   
 
 
 
 
 
-if __name__ == "__main__":
-    main()
+
+
     

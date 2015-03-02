@@ -107,7 +107,8 @@ def main():
 
 
 def trainOnSamples():
-	print 'trainOnSamples()'
+        test()
+	
 
 def add(entry):
         char = entry.get()
@@ -125,6 +126,10 @@ def add(entry):
                         
                         entry['bg'] = 'white'
                         dim = array(image)
+                        box = getBox(dim)
+                        crimage = image.crop(box)
+                        crimage = crimage.resize((32,32),Image.ANTIALIAS)
+                        dim = array(crimage)
                         dim = blackwhite(dim)
                         inp = makestring(dim)
                         tar = getcharkey(char)
