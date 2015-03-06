@@ -130,8 +130,13 @@ def add(entry):
                         crimage = image.crop(box)
                         crimage = crimage.resize((32,32),Image.ANTIALIAS)
                         dim = array(crimage)
+                        
+                        
                         dim = blackwhite(dim)
+                        dim = makelist(dim)
+                        
                         inp = makestring(dim)
+                        
                         tar = getcharkey(char)
                         sample = Sample(inp,tar)
                         try:

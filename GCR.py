@@ -68,7 +68,12 @@ def getcharkey(char):
 
         
 def init():
-    global samples
+
+    
+    global samples,db
+
+    #caching samples
+    
     samples = []
     db = sqlite3.connect('data.db')
     cursor = db.cursor()
@@ -80,11 +85,11 @@ def init():
         sample = Sample(r[1],r[2])
         samples.append(sample)
 
+    
+    
 
-    db.close()
 
-
-    print 'main()'
+    
 
         
     
@@ -95,6 +100,7 @@ def average(numlist):
     return sum(numlist)/len(numlist)
 
 def blackwhite(dim):
+    dim = dim.tolist()
     imrow = []
     im = []
     for i in dim:
@@ -107,22 +113,27 @@ def blackwhite(dim):
     return dim
 
 def makestring(dim):
-    string = ''
-    for i in dim:
-        for j in i:
-            string = string + str(j) + ','
-            
-        string = string[:-1]
+    string = [str(i) for i in dim]
+    string = ','.join(string)
         
     return string
-    
+
+def makelist(dim):
+    lst = []
+    for i in dim:
+        for j in i:
+            lst.append(j)
+
+    return lst
+
+
 def addSample(sample):
     
-    db = sqlite3.connect('data.db')
+    
     cursor = db.cursor()
     cursor.execute("insert into samples (Input,Target) values (?,?)",[sample.Input,sample.Target])
     db.commit()
-    db.close()
+    
     
 
 
