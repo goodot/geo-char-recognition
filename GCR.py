@@ -5,6 +5,9 @@ import sqlite3
 import tkMessageBox
 
 from pybrain.tools.shortcuts import buildNetwork
+from pybrain.datasets import SupervisedDataSet
+from pybrain.supervised.trainers import BackpropTrainer
+
 
 
 #global db, x, dimage, image,alphabet
@@ -85,8 +88,41 @@ def init():
         sample = Sample(r[1],r[2])
         samples.append(sample)
 
+    global net,ds,trainer
+
+    
+    if len(samples) > 0:
+        
+        ins = len(samples[0].getInput())
+        hids = ins * 2/3
+        outs = 1
+
+        net = buildNetwork(ins,hids,outs,bias = True)
+        ds = SupervisedDataSet(ins,outs)
+
+        for s in samples:
+            ds.addSample(s.getInput(),s.getTarget())
+
+
+        trainer = BackpropTrainer(net,ds)
+
+def which(dim):
+    dim = makelist(dim)
+    out = net.activate(dim)
+    #index = out.argmax()
+    #print alphabet[index]
+    print out
     
     
+def train():
+    error = 10
+    while error > 0.00001:
+        error = trainer.train()
+    #trainer.trainUntilConvergence()
+
+    print 'training finished'
+
+
 
 
     
@@ -129,7 +165,7 @@ def makelist(dim):
 
 def addSample(sample):
     
-    
+    samples.append(sample)
     cursor = db.cursor()
     cursor.execute("insert into samples (Input,Target) values (?,?)",[sample.Input,sample.Target])
     db.commit()

@@ -5,6 +5,7 @@ import os
 from GCR import *
 from numpy import array
 import tkMessageBox
+from random import randint
 
 from copy import deepcopy
 
@@ -81,7 +82,7 @@ def main():
 	textarea.grid(row = 1, column = 0)
 	
 	
-	whichButton = Button(root, bg = 'white',text = '?', width = 15, command = lambda: whichCharIsIt(image,root))
+	whichButton = Button(root, bg = 'white',text = '?', width = 15, command = whichCharIsIt)
 	whichButton.grid(row = 2,column = 0)
 
 	addButton = Button(root,bg = 'white', text = 'დამატება',  command = lambda: add(textarea) )
@@ -107,7 +108,7 @@ def main():
 
 
 def trainOnSamples():
-        test()
+        train()
 	
 
 def add(entry):
@@ -128,7 +129,11 @@ def add(entry):
                         dim = array(image)
                         box = getBox(dim)
                         crimage = image.crop(box)
-                        crimage = crimage.resize((32,32),Image.ANTIALIAS)
+                        crimage = crimage.resize((16,16),Image.ANTIALIAS)
+                        rand = randint(1,100000)
+                        rand = str(rand)
+                        crimage.save('samples/'+rand+'.jpg')
+                        
                         dim = array(crimage)
                         
                         
@@ -138,6 +143,10 @@ def add(entry):
                         inp = makestring(dim)
                         
                         tar = getcharkey(char)
+                        tar = tar*10
+##                        tar = [0]*33
+##                        tar[charkey] = 1
+##                        tar = makestring(tar)
                         sample = Sample(inp,tar)
                         try:
                                 
@@ -153,8 +162,15 @@ def add(entry):
 		
 
 		    
-def whichCharIsIt(img,r):
-	print 'whichCharIsIt(img,r)'
+def whichCharIsIt():
+        dim = array(image)
+        box = getBox(dim)
+        crimage = image.crop(box)
+        crimage = crimage.resize((16,16),Image.ANTIALIAS)
+        crimage.save('which.jpg')
+        dim = array(crimage)
+        dim = blackwhite(dim)
+        which(dim)
 	
 
 
