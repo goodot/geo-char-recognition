@@ -88,7 +88,7 @@ def main():
 	addButton = Button(root,bg = 'white', text = 'დამატება',  command = lambda: add(textarea) )
 	addButton.grid(column = 1, row = 1)
 
-	trainButton = Button(root,bg = 'white', text  = 'გაწვრთნა', width = 15, command = trainOnSamples)
+	trainButton = Button(root,bg = 'white', text  = 'სწავლა', width = 15, command = trainOnSamples)
 	trainButton.grid(row = 3, column = 0)
 	
 	image = Image.new("RGB",(256,256),(255,255,255))
@@ -132,7 +132,8 @@ def add(entry):
                         crimage = crimage.resize((16,16),Image.ANTIALIAS)
                         rand = randint(1,100000)
                         rand = str(rand)
-                        crimage.save('samples/'+rand+'.jpg')
+                        charkey = getcharkey(char)
+                        crimage.save('samples/'+ str(charkey)+'-'+rand+'.png')
                         
                         dim = array(crimage)
                         
@@ -142,11 +143,11 @@ def add(entry):
                         
                         inp = makestring(dim)
                         
-                        tar = getcharkey(char)
-                        tar = tar*10
-##                        tar = [0]*33
-##                        tar[charkey] = 1
-##                        tar = makestring(tar)
+                        
+                        
+                        tar = [0]*33
+                        tar[charkey] = 1
+                        tar = makestring(tar)
                         sample = Sample(inp,tar)
                         try:
                                 

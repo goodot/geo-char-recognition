@@ -4,9 +4,17 @@ from numpy import array
 import sqlite3
 import tkMessageBox
 
+import matplotlib.pyplot as plt
+
+
 from pybrain.tools.shortcuts import buildNetwork
 from pybrain.datasets import SupervisedDataSet
 from pybrain.supervised.trainers import BackpropTrainer
+from pybrain.structure.modules import SoftmaxLayer
+from pybrain.structure.modules import TanhLayer
+from pybrain.structure.modules import SigmoidLayer
+
+ 
 
 
 
@@ -90,35 +98,87 @@ def init():
 
     global net,ds,trainer
 
+    ins = 256
+    hids = ins * 2/3
+    outs = 33
+
+    net = buildNetwork(ins,hids,outs,bias = True,outclass = SoftmaxLayer)
+    ds = SupervisedDataSet(ins,outs)
     
+
+    rows = cursor.execute('select * from parameters')
+    rows = rows.fetchall()
+
+    params_list = []
+
+    for r in rows:
+        params = Params(r[1])
+        params_list.append(params)
+
+    params = params_list[len(params_list)-1]
+    net._setParameters(params.getWeights())
+    trainer = BackpropTrainer(net,ds)
+
+        
     if len(samples) > 0:
         
-        ins = len(samples[0].getInput())
-        hids = ins * 2/3
-        outs = 1
-
-        net = buildNetwork(ins,hids,outs,bias = True)
-        ds = SupervisedDataSet(ins,outs)
+        
 
         for s in samples:
             ds.addSample(s.getInput(),s.getTarget())
 
 
-        trainer = BackpropTrainer(net,ds)
+    
+
+
+    
+    
+        
 
 def which(dim):
     dim = makelist(dim)
+    #print dim
     out = net.activate(dim)
-    #index = out.argmax()
-    #print alphabet[index]
-    print out
+    index = out.argmax()
+    print alphabet[index]
+    print str(out[index] * 100)+'%'
+    #print [i for i in out]
+
+    plt.clf()
+    plt.title(u'გრაფიკი')
+    labels = [u'ა',u'ბ',u'გ',u'დ',u'ე',u'ვ',u'ზ',u'თ',u'ი',u'კ',u'ლ',u'მ',u'ნ',u'ო',u'პ',u'ჟ',u'რ',u'ს',u'ტ',
+            u'უ',u'ფ',u'ქ',u'ღ',u'ყ',u'შ',u'ჩ',u'ც',u'ძ',
+            u'წ',u'ჭ',u'ხ',u'ჯ',u'ჰ']
+    x = range(33)
+    plt.xticks(x,labels)
+    plt.bar(x,out)
     
+    plt.show()
     
 def train():
     error = 10
+    it = 0
+    iterations = []
+    errors = []
     while error > 0.00001:
         error = trainer.train()
-    #trainer.trainUntilConvergence()
+        it = it + 1
+        iterations.append(it)
+        errors.append(error)
+
+    params = makestring(net.params)
+    cursor = db.cursor()
+    cursor.execute("insert into parameters (Weights) values (?)",(params,))
+    db.commit()
+    
+    plt.clf()
+    plt.xlabel(u'იტერაციები')
+    plt.ylabel(u'ცდომილებები')
+    plt.title(u'ცდომილების გრაფიკი')
+    plt.plot(iterations,errors)
+    plt.show()
+    
+    
 
     print 'training finished'
 
@@ -166,6 +226,7 @@ def makelist(dim):
 def addSample(sample):
     
     samples.append(sample)
+    ds.addSample(sample.getInput(),sample.getTarget())
     cursor = db.cursor()
     cursor.execute("insert into samples (Input,Target) values (?,?)",[sample.Input,sample.Target])
     db.commit()
