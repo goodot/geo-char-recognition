@@ -6,10 +6,7 @@ from GCR import *
 from numpy import array
 import tkMessageBox
 from random import randint
-
 from copy import deepcopy
-
-
 
 
 b1 = "up"
